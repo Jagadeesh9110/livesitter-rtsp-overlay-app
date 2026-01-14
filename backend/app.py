@@ -1,27 +1,17 @@
-import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from pymongo import MongoClient
 from bson.objectid import ObjectId
-from dotenv import load_dotenv
+from db import overlays_collection
 
 app = Flask(__name__)
 CORS(app)
-
-# MongoDB Connection (GLOBAL)
-load_dotenv()
-client = MongoClient(os.getenv("MONGODB_URI"))
-db = client["rtsp_overlay_db"]
-overlays_collection = db["overlays"]
 
 # Health Check
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok"})
 
-
 # CREATE Overlay
-
 @app.route("/api/overlays", methods=["POST"])
 def create_overlay():
     data = request.json
@@ -38,9 +28,7 @@ def create_overlay():
 
     return jsonify(overlay), 201
 
-# -----------------------------
 # READ Overlays
-# -----------------------------
 @app.route("/api/overlays", methods=["GET"])
 def get_overlays():
     overlays = []
@@ -51,6 +39,42 @@ def get_overlays():
 
     return jsonify(overlays), 200
 
-# -----------------------------
+# UPDATE Overlay
+@app.route("/api/overlays/<overlay_id>", methods=["PUT"])
+def update_overlay(overlay_id):
+    data = request.json
+
+    updated_data = {
+        "type": data.get("type"),
+        "content": data.get("content"),
+        "position": data.get("position"),
+        "size": data.get("size")
+    }
+
+    updated_data = {k: v for k, v in updated_data.items() if v is not None}
+
+    result = overlays_collection.update_one(
+        {"_id": ObjectId(overlay_id)},
+        {"$set": updated_data}
+    )
+
+    if result.matched_count == 0:
+        return jsonify({"error": "Overlay not found"}), 404
+
+    overlay = overlays_collection.find_one({"_id": ObjectId(overlay_id)})
+    overlay["_id"] = str(overlay["_id"])
+
+    return jsonify(overlay), 200
+
+# DELETE Overlay
+@app.route("/api/overlays/<overlay_id>", methods=["DELETE"])
+def delete_overlay(overlay_id):
+    result = overlays_collection.delete_one({"_id": ObjectId(overlay_id)})
+
+    if result.deleted_count == 0:
+        return jsonify({"error": "Overlay not found"}), 404
+
+    return jsonify({"message": "Overlay deleted"}), 200
+
 if __name__ == "__main__":
     app.run(debug=True)
