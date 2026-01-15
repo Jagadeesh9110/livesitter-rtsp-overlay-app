@@ -20,6 +20,7 @@ export default function VideoPlayer({ src }: Props) {
             return () => {
                 hls.destroy();
             };
+
         } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
             video.src = src;
         }
