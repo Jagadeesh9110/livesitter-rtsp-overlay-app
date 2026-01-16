@@ -73,6 +73,10 @@ export default function App() {
     });
   };
 
+  const STREAM_URL =
+  "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
+
+
   return (
     <div className="landing-page">
       {/* Header */}
@@ -93,7 +97,7 @@ export default function App() {
 
         {/* Video Container */}
         <div className="video-container">
-          <VideoPlayer src="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" />
+          <VideoPlayer src={STREAM_URL} />
           <OverlayLayer overlays={overlays} />
         </div>
 

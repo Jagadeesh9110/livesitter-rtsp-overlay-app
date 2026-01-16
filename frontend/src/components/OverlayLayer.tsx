@@ -90,11 +90,14 @@ export default function OverlayLayer({ overlays }: Props) {
 
     return (
         <div
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            style={{ position: "absolute", inset: 0, overflow: "hidden" }}
-        >
+  onMouseMove={handleMouseMove}
+  onMouseUp={handleMouseUp}
+  style={{
+    position: "absolute",
+    inset: 0,
+    pointerEvents: "none",
+  }}
+>
             {overlays.map((overlay) => {
                 const view = draft && overlay._id === activeId ? draft : overlay;
                 const isActive = overlay._id === activeId;
@@ -114,6 +117,7 @@ export default function OverlayLayer({ overlays }: Props) {
                             borderRadius: "4px",
                             cursor: "move",
                             userSelect: "none",
+                            pointerEvents: "auto",
                             backgroundColor: overlay.type === "text" ? "rgba(14, 10, 11, 0.8)" : "transparent",
                             transition: isActive ? "none" : "border-color 0.15s ease",
                         }}
