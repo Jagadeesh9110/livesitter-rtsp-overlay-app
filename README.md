@@ -2,84 +2,62 @@
 
 Assignment submission for **Livesitter – AI Full Stack Developer Internship**.
 
-This application plays a livestream video and allows users to create, manage, and display real-time overlays (text or image) on top of the video. Overlay updates are synchronized live across all connected clients using WebSockets.
+**Demo Video:** [Watch on Google Drive](https://drive.google.com/file/d/19l-nDF4E-JUl8_h3oizKukJTsxZTwd28/view?usp=sharing)
+
+This application plays a livestream video and allows users to create, manage, and display real-time overlays (text or image) on top of the video. Overlay updates are synchronized across all connected clients using WebSockets.
 
 ---
 
-## 🚀 Tech Stack
+## Tech Stack
 
-### Frontend
-| Technology | Purpose |
-|------------|---------|
-| React 19 | UI Framework |
-| TypeScript | Type Safety |
-| Vite | Build Tool & Dev Server |
-| Socket.IO Client | Real-time Communication |
-| hls.js | HLS Video Playback |
+**Frontend**
+- React 19 with TypeScript
+- Vite (build tool and dev server)
+- Socket.IO Client (real-time communication)
+- hls.js (HLS video playback)
 
-### Backend
-| Technology | Purpose |
-|------------|---------|
-| Python | Runtime |
-| Flask | Web Framework |
-| Flask-SocketIO | WebSocket Integration |
-| MongoDB (PyMongo) | Database |
+**Backend**
+- Python with Flask
+- Flask-SocketIO (WebSocket integration)
+- MongoDB with PyMongo
 
 ---
 
-## 🎥 RTSP Streaming Approach
+## RTSP Streaming Approach
 
-Browsers do not natively support RTSP streams. To handle this, the application uses the standard industry approach:
+Browsers do not natively support RTSP streams. The standard approach is:
 
 ```
 RTSP → FFmpeg → HLS (.m3u8) → Browser Video Player
 ```
 
-For demonstration purposes, a public HLS stream is used. The same UI seamlessly works with any RTSP stream converted to HLS.
+For demonstration, a public HLS stream is used. The same implementation works with any RTSP stream converted to HLS via FFmpeg.
 
 ---
 
-## ✨ Features
+## Features
 
-| Feature | Description |
-|---------|-------------|
-| 📺 Livestream Playback | HLS video streaming with hls.js |
-| 📝 Text Overlays | Add customizable text overlays |
-| 🖼️ Image Overlays | Add image overlays on video |
-| 🖱️ Drag-and-Drop | Position overlays by dragging |
-| 📐 Resizable Overlays | Resize overlays as needed |
-| ⚡ Real-time Updates | Instant sync via WebSockets |
-| 💾 Persistent Storage | Overlays stored in MongoDB |
-| 🔄 Full CRUD APIs | Create, Read, Update, Delete operations |
+- **Livestream Playback** – HLS video streaming using hls.js
+- **Text Overlays** – Add customizable text overlays on the video
+- **Image Overlays** – Add image overlays on the video
+- **Drag-and-Drop** – Reposition overlays by dragging
+- **Resizable Overlays** – Resize overlays as needed
+- **Real-time Sync** – Instant updates across clients via WebSockets
+- **Persistent Storage** – Overlays stored in MongoDB
+- **Full CRUD API** – Create, Read, Update, Delete operations
 
 ---
 
-## 📡 Real-Time Architecture
+## Real-Time Architecture
 
-```mermaid
-sequenceDiagram
-    participant Client A
-    participant REST API
-    participant MongoDB
-    participant WebSocket
-    participant Client B
-
-    Client A->>REST API: CRUD Operation
-    REST API->>MongoDB: Update Database
-    REST API->>WebSocket: Emit Event
-    WebSocket->>Client A: Receive Update
-    WebSocket->>Client B: Receive Update
-```
-
-**Flow:**
-1. Client performs CRUD via REST APIs
+1. Client performs a CRUD operation via REST API
 2. Backend updates MongoDB
-3. Backend emits WebSocket events
-4. All connected clients receive updates instantly
+3. Backend emits a WebSocket event
+4. All connected clients receive the update instantly
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 livesitter-rtsp-overlay-app/
@@ -105,9 +83,10 @@ livesitter-rtsp-overlay-app/
 
 ---
 
-## 🔧 Running Locally
+## Running Locally
 
 ### Prerequisites
+
 - Python 3.8+
 - Node.js 18+
 - MongoDB (local or cloud)
@@ -124,11 +103,12 @@ python app.py
 ```
 
 Create a `.env` file in the `backend` folder:
-```env
+
+```
 MONGODB_URI=your_mongodb_connection_string
 ```
 
-✅ Backend runs at: `http://127.0.0.1:5000`
+Backend runs at: `http://127.0.0.1:5000`
 
 ### Frontend Setup
 
@@ -138,19 +118,19 @@ npm install
 npm run dev
 ```
 
-✅ Frontend runs at: `http://localhost:5173`
+Frontend runs at: `http://localhost:5173`
 
 ---
 
-## 📑 API Endpoints
+## API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/health` | Health check |
-| `GET` | `/api/overlays` | Fetch all overlays |
-| `POST` | `/api/overlays` | Create new overlay |
-| `PUT` | `/api/overlays/:id` | Update overlay by ID |
-| `DELETE` | `/api/overlays/:id` | Delete overlay by ID |
+| Method   | Endpoint             | Description            |
+|----------|----------------------|------------------------|
+| `GET`    | `/health`            | Health check           |
+| `GET`    | `/api/overlays`      | Fetch all overlays     |
+| `POST`   | `/api/overlays`      | Create new overlay     |
+| `PUT`    | `/api/overlays/:id`  | Update overlay by ID   |
+| `DELETE` | `/api/overlays/:id`  | Delete overlay by ID   |
 
 ### Overlay Schema
 
@@ -166,41 +146,38 @@ npm run dev
 
 ---
 
-## 🔌 WebSocket Events
+## WebSocket Events
 
-| Event | Direction | Payload |
-|-------|-----------|---------|
-| `overlay_created` | Server → Client | Overlay object |
-| `overlay_updated` | Server → Client | Updated overlay |
-| `overlay_deleted` | Server → Client | `{ "_id": "..." }` |
-
----
-
-## 🎬 Demo Video
-
-A short demo video is included demonstrating:
-
-- ✅ Application startup
-- ✅ Livestream playback
-- ✅ Creating text and image overlays
-- ✅ Dragging and repositioning overlays
-- ✅ Resizing overlays
-- ✅ Real-time synchronization across multiple clients
-- ✅ Persistent storage verification
+| Event             | Direction         | Payload              |
+|-------------------|-------------------|----------------------|
+| `overlay_created` | Server → Client   | Overlay object       |
+| `overlay_updated` | Server → Client   | Updated overlay      |
+| `overlay_deleted` | Server → Client   | `{ "_id": "..." }`   |
 
 ---
 
-## 📬 Submission
+## Demo Video
 
-**GitHub Repository:** [Jagadeesh9110/livesitter-rtsp-overlay-app](https://github.com/Jagadeesh9110/livesitter-rtsp-overlay-app)
+A demo video is included demonstrating:
+
+- Application startup
+- Livestream playback
+- Creating text and image overlays
+- Dragging and repositioning overlays
+- Resizing overlays
+- Real-time synchronization across multiple clients
+- Persistent storage verification
 
 ---
 
-## 👤 Author
+## Repository
+
+GitHub: [Jagadeesh9110/livesitter-rtsp-overlay-app](https://github.com/Jagadeesh9110/livesitter-rtsp-overlay-app)
+
+---
+
+## Author
 
 **Jagadeeswar**  
 AI Full Stack Developer Internship Candidate  
 Livesitter Assignment Submission
-
----
-
